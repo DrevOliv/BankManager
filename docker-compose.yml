@@ -16,7 +16,6 @@ services:
       retries: 20
 
   app:
-    build: .
     image: bankmanager:latest
     restart: unless-stopped
     depends_on:
