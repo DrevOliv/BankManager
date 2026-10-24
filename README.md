@@ -39,23 +39,24 @@ Either way, open <http://localhost:8080> (or `http://<server-ip>:8080`), create 
 
 ## Building and publishing the image
 
-The Makefile wraps `docker buildx`. Give the image name after the command, optionally with a tag:
+The Makefile wraps `docker buildx`. The image name defaults to `drevoliv/bankmanager`:
 
 | Command | What it does |
 | --- | --- |
-| `make build drevoliv/bankmanager` | Builds for this machine and loads the image into your local Docker |
-| `make push drevoliv/bankmanager` | Builds for `linux/amd64` and `linux/arm64` and pushes `:latest` |
-| `make push drevoliv/bankmanager:1.2.0` | Same, and tags it both `1.2.0` and `latest` |
+| `make build` | Builds `drevoliv/bankmanager:latest` for this machine and loads it into your local Docker |
+| `make push` | Builds for `linux/amd64` and `linux/arm64` and pushes `drevoliv/bankmanager:latest` |
+| `make push 1.2.0` | Same, and tags it both `1.2.0` and `latest` |
+| `make push someone/bankmanager:1.2.0` | Uses a different image name |
 | `make up` / `make down` / `make logs` | Start, stop or follow the app with Docker Compose (from source) |
 | `make test` | Runs the server tests |
 | `make help` | Lists all commands |
 
-To publish, log in once with `docker login`, then run `make push drevoliv/bankmanager:1.0.0`.
+To publish, log in once with `docker login`, then run `make push 1.0.0`.
 
 - The first `push` creates a buildx builder called `bankmanager-builder`.
 - The image works on both Intel/AMD servers and ARM machines such as a Raspberry Pi or Apple Silicon.
 - The version is shown at the bottom of the Settings page.
-- Variables work too: `make push IMAGE=drevoliv/bankmanager TAG=1.0.0 PLATFORMS=linux/amd64`.
+- Variables work too: `make push IMAGE=someone/bankmanager TAG=1.0.0 PLATFORMS=linux/amd64`.
 
 Your `.env` and the `samples/` folder are excluded from the image by `.dockerignore`.
 

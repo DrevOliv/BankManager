@@ -1,23 +1,30 @@
 # BankManager: build, publish and run the Docker image.
 #
-#   make build drevoliv/bankmanager          Build for this machine and load it into Docker
-#   make push  drevoliv/bankmanager          Build for linux/amd64 + linux/arm64 and push
-#   make push  drevoliv/bankmanager:1.2.0    Push 1.2.0 and latest
+#   make build          Build drevoliv/bankmanager for this machine and load it into Docker
+#   make push           Build for linux/amd64 + linux/arm64 and push drevoliv/bankmanager:latest
+#   make push 1.2.0     Push drevoliv/bankmanager:1.2.0 and :latest
+#   make push someone/bankmanager:1.2.0   Use another image name
 #
-# The image can also be given as variables: make push IMAGE=drevoliv/bankmanager TAG=1.2.0
+# Variables work too: make push IMAGE=drevoliv/bankmanager TAG=1.2.0
 
-IMAGE     ?= bankmanager
+IMAGE     ?= drevoliv/bankmanager
 TAG       ?= latest
 PLATFORMS ?= linux/amd64,linux/arm64
 BUILDER   ?= bankmanager-builder
 
 COMMANDS := help build push builder up down logs test
 
-# Accept the image name as a plain word after the command (make build drevoliv/bankmanager),
-# and turn that word into a no-op target so make doesn't try to build a file with that name.
+# Accept an image name and/or tag as a plain word after the command (make push 1.2.0,
+# make build someone/bankmanager:dev), and turn that word into a no-op target so make
+# doesn't try to build a file with that name. A word without "/" or ":" is just a tag.
 EXTRA := $(filter-out $(COMMANDS),$(MAKECMDGOALS))
 ifneq ($(EXTRA),)
-  IMAGE := $(firstword $(EXTRA))
+  WORD := $(firstword $(EXTRA))
+  ifneq ($(findstring /,$(WORD))$(findstring :,$(WORD)),)
+    IMAGE := $(WORD)
+  else
+    TAG := $(WORD)
+  endif
   $(eval $(subst :,\:,$(EXTRA)):;@:)
 endif
 
@@ -39,13 +46,14 @@ BUILD_ARGS := --build-arg VERSION=$(TAG) $(TAGS)
 .PHONY: $(COMMANDS)
 
 help: ## Show this help
-	@echo "Usage: make <command> [image[:tag]]"
+	@echo "Usage: make <command> [tag | image[:tag]]    (image defaults to $(IMAGE))"
 	@echo
 	@grep -E '^[a-z]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN { FS = ":.*## " } { printf "  make %-8s %s\n", $$1, $$2 }'
 	@echo
 	@echo "Examples:"
-	@echo "  make build drevoliv/bankmanager"
-	@echo "  make push drevoliv/bankmanager:1.0.0"
+	@echo "  make build                  builds $(IMAGE):latest"
+	@echo "  make push 1.0.0             pushes $(IMAGE):1.0.0 and :latest"
+	@echo "  make push someone/app:dev   another image name"
 
 build: ## Build the image for this machine and load it into Docker
 	docker buildx build --load $(BUILD_ARGS) .
