@@ -6,6 +6,8 @@ function env(name: string, fallback?: string): string {
 }
 
 export const config = {
+  /** Image tag the container was built with (set by the Dockerfile). */
+  version: env('APP_VERSION', 'dev'),
   port: Number(env('PORT', '3000')),
   host: env('HOST', '0.0.0.0'),
   databaseUrl: env('DATABASE_URL', 'postgres://bankmanager:bankmanager@localhost:5432/bankmanager'),

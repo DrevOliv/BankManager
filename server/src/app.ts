@@ -37,7 +37,7 @@ export async function buildApp() {
 
   app.get('/api/health', async () => {
     await pool.query('SELECT 1');
-    return { ok: true };
+    return { ok: true, version: config.version };
   });
 
   // Registered on the root instance (not via register) so its auth hook covers every route.

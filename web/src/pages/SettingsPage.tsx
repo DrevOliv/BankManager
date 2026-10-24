@@ -10,6 +10,7 @@ import { BankBadge, Button, Card, CardHeader, Field, Input, Modal, Select, Toggl
 export function SettingsPage() {
   const { data: settings } = useSettings();
   const auth = useAuth();
+  const version = useQuery({ queryKey: ['version'], queryFn: () => api.get<{ version: string }>('/api/health'), staleTime: Infinity });
   return (
     <div className="space-y-5">
       <div>
@@ -25,6 +26,7 @@ export function SettingsPage() {
         {settings && <FxCard settings={settings} />}
       </div>
       {auth.data?.user?.is_admin && <UsersCard me={auth.data.user} />}
+      {version.data && <p className="pt-2 text-center text-[12px] text-muted">BankManager {version.data.version}</p>}
     </div>
   );
 }

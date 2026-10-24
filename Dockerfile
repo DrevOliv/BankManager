@@ -1,7 +1,10 @@
 # syntax=docker/dockerfile:1
 
+# The build stages only produce JavaScript and static files, so they run on the build machine's
+# own platform (fast, no emulation) even when the final image is built for another one.
+
 # ---- Build the React frontend ----
-FROM node:24-bookworm-slim AS web
+FROM --platform=$BUILDPLATFORM node:24-bookworm-slim AS web
 WORKDIR /app/web
 COPY web/package.json web/package-lock.json ./
 RUN npm ci
@@ -9,7 +12,7 @@ COPY web/ ./
 RUN npm run build
 
 # ---- Build the API ----
-FROM node:24-bookworm-slim AS server
+FROM --platform=$BUILDPLATFORM node:24-bookworm-slim AS server
 WORKDIR /app/server
 COPY server/package.json server/package-lock.json ./
 RUN npm ci
@@ -18,8 +21,13 @@ RUN npm run build && npm prune --omit=dev
 
 # ---- Runtime ----
 FROM node:24-alpine
+ARG VERSION=dev
+LABEL org.opencontainers.image.title="BankManager" \
+      org.opencontainers.image.description="Self-hosted spending overview for Handelsbanken and Revolut" \
+      org.opencontainers.image.version="$VERSION"
 RUN apk add --no-cache tzdata
 ENV NODE_ENV=production \
+    APP_VERSION=$VERSION \
     PORT=3000 \
     TZ=Europe/Stockholm \
     WEB_DIST=/app/web/dist
