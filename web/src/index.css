@@ -1,0 +1,177 @@
+@import 'tailwindcss';
+
+/* ---- Design tokens (light) ---- */
+:root {
+  color-scheme: light;
+  --page: #f3f3f0;
+  --surface: #fcfcfb;
+  --surface-2: #f6f6f3;
+  --ink: #0b0b0b;
+  --ink-2: #52514e;
+  --muted: #898781;
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --border: rgba(11, 11, 11, 0.08);
+  --border-strong: rgba(11, 11, 11, 0.14);
+  --hover: rgba(11, 11, 11, 0.04);
+  --accent: #2a78d6; /* series 1: spending */
+  --accent-ink: #1c5cab;
+  --accent-soft: #cde2fb;
+  --accent-wash: rgba(42, 120, 214, 0.1);
+  --series-income: #1baf7a; /* series 3: income */
+  --series-muted: #c3c2b7; /* de-emphasis (last month) */
+  --good: #006300;
+  --bad: #c43434;
+  --warning: #fab219;
+  --critical: #d03b3b;
+  --shadow: 0 1px 2px rgba(11, 11, 11, 0.04), 0 1px 1px rgba(11, 11, 11, 0.02);
+  --shadow-lg: 0 12px 32px -8px rgba(11, 11, 11, 0.18), 0 2px 6px rgba(11, 11, 11, 0.06);
+  --hb-bg: rgba(0, 90, 160, 0.1);
+  --hb-ink: #00508f;
+  --rev-bg: rgba(11, 11, 11, 0.07);
+  --rev-ink: #0b0b0b;
+  --swish-bg: #e3f5ec;
+  --swish-ink: #0b6b45;
+}
+
+/* ---- Dark: selected steps, not an automatic flip ---- */
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme='light'])) {
+    color-scheme: dark;
+    --page: #0d0d0d;
+    --surface: #1a1a19;
+    --surface-2: #222220;
+    --ink: #f0efec;
+    --ink-2: #c3c2b7;
+    --muted: #898781;
+    --grid: #2c2c2a;
+    --axis: #383835;
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.14);
+    --hover: rgba(255, 255, 255, 0.05);
+    --accent: #3987e5;
+    --accent-ink: #86b6ef;
+    --accent-soft: #184f95;
+    --accent-wash: rgba(57, 135, 229, 0.14);
+    --series-income: #199e70;
+    --series-muted: #4a4a46;
+    --good: #0ca30c;
+    --bad: #e66767;
+    --shadow: none;
+    --shadow-lg: 0 12px 32px -8px rgba(0, 0, 0, 0.6);
+    --hb-bg: rgba(84, 160, 230, 0.16);
+    --hb-ink: #8cc2f2;
+    --rev-bg: rgba(255, 255, 255, 0.1);
+    --rev-ink: #f0efec;
+    --swish-bg: #123326;
+    --swish-ink: #7fd6ad;
+  }
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --page: #0d0d0d;
+  --surface: #1a1a19;
+  --surface-2: #222220;
+  --ink: #f0efec;
+  --ink-2: #c3c2b7;
+  --muted: #898781;
+  --grid: #2c2c2a;
+  --axis: #383835;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --hover: rgba(255, 255, 255, 0.05);
+  --accent: #3987e5;
+  --accent-ink: #86b6ef;
+  --accent-soft: #184f95;
+  --accent-wash: rgba(57, 135, 229, 0.14);
+  --series-income: #199e70;
+  --series-muted: #4a4a46;
+  --good: #0ca30c;
+  --bad: #e66767;
+  --shadow: none;
+  --shadow-lg: 0 12px 32px -8px rgba(0, 0, 0, 0.6);
+  --hb-bg: rgba(84, 160, 230, 0.16);
+  --hb-ink: #8cc2f2;
+  --rev-bg: rgba(255, 255, 255, 0.1);
+  --rev-ink: #f0efec;
+  --swish-bg: #123326;
+  --swish-ink: #7fd6ad;
+}
+
+@theme inline {
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-grid: var(--grid);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-hover: var(--hover);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-wash: var(--accent-wash);
+  --color-income: var(--series-income);
+  --color-good: var(--good);
+  --color-bad: var(--bad);
+  --color-warning: var(--warning);
+  --color-critical: var(--critical);
+  --shadow-card: var(--shadow);
+  --shadow-pop: var(--shadow-lg);
+  --color-hb: var(--hb-ink);
+  --color-hb-bg: var(--hb-bg);
+  --color-rev: var(--rev-ink);
+  --color-rev-bg: var(--rev-bg);
+  --color-swish: var(--swish-ink);
+  --color-swish-bg: var(--swish-bg);
+}
+
+html,
+body {
+  background: var(--page);
+  color: var(--ink);
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Recharts focus outlines on click are noisy; keep keyboard focus visible elsewhere. */
+.recharts-wrapper *:focus:not(:focus-visible) {
+  outline: none;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.animate-in {
+  animation: fade-in 0.18s ease-out;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+.caret::after {
+  content: '▍';
+  margin-left: 1px;
+  color: var(--muted);
+  animation: blink 1s steps(1) infinite;
+}

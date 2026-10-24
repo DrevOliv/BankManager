@@ -1,0 +1,41 @@
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: bankmanager
+      POSTGRES_USER: bankmanager
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      TZ: ${TZ:-Europe/Stockholm}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bankmanager -d bankmanager"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  app:
+    build: .
+    image: bankmanager:latest
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://bankmanager:${POSTGRES_PASSWORD}@db:5432/bankmanager
+      # Where your Ollama server runs. host.docker.internal = the machine running Docker.
+      OLLAMA_URL: ${OLLAMA_URL:-http://host.docker.internal:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3.2:3b}
+      # Set to "true" when you serve the app over HTTPS (e.g. behind a reverse proxy).
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      TRUST_PROXY: ${TRUST_PROXY:-false}
+      TZ: ${TZ:-Europe/Stockholm}
+    ports:
+      - "${APP_PORT:-8080}:3000"
+    extra_hosts:
+      # Lets the container reach Ollama on the Docker host (needed on Linux).
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  db-data:
